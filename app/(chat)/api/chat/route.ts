@@ -24,7 +24,7 @@ import { updateDocument } from '@/lib/ai/tools/update-document';
 import { requestSuggestions } from '@/lib/ai/tools/request-suggestions';
 import { getWeather } from '@/lib/ai/tools/get-weather';
 import { isProductionEnvironment } from '@/lib/constants';
-import { myProvider } from '@/lib/ai/providers';
+import { aiProvider } from '@/lib/ai/providers';
 
 export const maxDuration = 60;
 
@@ -82,7 +82,7 @@ export async function POST(request: Request) {
     return createDataStreamResponse({
       execute: (dataStream) => {
         const result = streamText({
-          model: myProvider.languageModel(selectedChatModel),
+          model: aiProvider.languageModel(selectedChatModel),
           system: systemPrompt({ selectedChatModel }),
           messages,
           maxSteps: 5,

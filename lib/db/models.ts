@@ -124,9 +124,9 @@ export const Vote: Model<IVote> = mongoose.models.Vote || mongoose.model<IVote>(
 export const Doc: Model<IDocument> = mongoose.models.Document || mongoose.model<IDocument>('Document', DocumentSchema);
 export const Suggestion: Model<ISuggestion> = mongoose.models.Suggestion || mongoose.model<ISuggestion>('Suggestion', SuggestionSchema);
 
-// Define compound unique indexes
-ChatSchema.index({ id: 1 }, { unique: true });
-MessageSchema.index({ id: 1 }, { unique: true });
-VoteSchema.index({ chatId: 1, messageId: 1 }, { unique: true });
-DocumentSchema.index({ id: 1, createdAt: 1 }, { unique: true });
-SuggestionSchema.index({ id: 1 }, { unique: true });
+// // Define compound unique indexes
+// ChatSchema.index({ id: 1 }, { unique: true });
+// MessageSchema.index({ id: 1 }, { unique: true });
+// VoteSchema.index({ chatId: 1, messageId: 1 }, { unique: true });
+// DocumentSchema.index({ id: 1, createdAt: 1 }, { unique: true });
+// SuggestionSchema.index({ id: 1 }, { unique: true });
