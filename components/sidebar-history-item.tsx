@@ -1,4 +1,4 @@
-import { Chat } from '@/lib/db/schema';
+import { IChat } from '@/types/models';
 import {
   SidebarMenuAction,
   SidebarMenuButton,
@@ -32,7 +32,7 @@ const PureChatItem = ({
   onDelete,
   setOpenMobile,
 }: {
-  chat: Chat;
+  chat: IChat;
   isActive: boolean;
   onDelete: (chatId: string) => void;
   setOpenMobile: (open: boolean) => void;

@@ -22,28 +22,28 @@ import {
   SidebarMenu,
   useSidebar,
 } from '@/components/ui/sidebar';
-import type { Chat } from '@/lib/db/schema';
-import { fetcher } from '@/lib/utils';
+import { getChatsByUserId, deleteChatById } from '@/lib/api-client';
+import type { IChat } from '@/types/models';
 import { ChatItem } from './sidebar-history-item';
 import useSWRInfinite from 'swr/infinite';
 import { LoaderIcon } from './icons';
 
 type GroupedChats = {
-  today: Chat[];
-  yesterday: Chat[];
-  lastWeek: Chat[];
-  lastMonth: Chat[];
-  older: Chat[];
+  today: IChat[];
+  yesterday: IChat[];
+  lastWeek: IChat[];
+  lastMonth: IChat[];
+  older: IChat[];
 };
 
 export interface ChatHistory {
-  chats: Array<Chat>;
+  chats: Array<IChat>;
   hasMore: boolean;
 }
 
 const PAGE_SIZE = 20;
 
-const groupChatsByDate = (chats: Chat[]): GroupedChats => {
+const groupChatsByDate = (chats: IChat[]): GroupedChats => {
   const now = new Date();
   const oneWeekAgo = subWeeks(now, 1);
   const oneMonthAgo = subMonths(now, 1);
@@ -79,18 +79,19 @@ const groupChatsByDate = (chats: Chat[]): GroupedChats => {
 export function getChatHistoryPaginationKey(
   pageIndex: number,
   previousPageData: ChatHistory,
+  userId: string,
 ) {
   if (previousPageData && previousPageData.hasMore === false) {
     return null;
   }
 
-  if (pageIndex === 0) return `/api/history?limit=${PAGE_SIZE}`;
+  if (pageIndex === 0) return [userId, PAGE_SIZE];
 
   const firstChatFromPage = previousPageData.chats.at(-1);
 
   if (!firstChatFromPage) return null;
 
-  return `/api/history?ending_before=${firstChatFromPage.id}&limit=${PAGE_SIZE}`;
+  return [userId, PAGE_SIZE, undefined, firstChatFromPage.id];
 }
 
 export function SidebarHistory({ user }: { user: User | undefined }) {
@@ -103,9 +104,17 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
     isValidating,
     isLoading,
     mutate,
-  } = useSWRInfinite<ChatHistory>(getChatHistoryPaginationKey, fetcher, {
-    fallbackData: [],
-  });
+  } = useSWRInfinite<ChatHistory>(
+    (pageIndex, previousPageData) => getChatHistoryPaginationKey(pageIndex, previousPageData, user?.id || ''),
+    async ([userId, limit, startingAfter, endingBefore]) => {
+      const response = await getChatsByUserId(userId, limit, startingAfter, endingBefore);
+      return response;
+    },
+    {
+      fallbackData: [],
+      revalidateOnFocus: false,
+    }
+  );
 
   const router = useRouter();
   const [deleteId, setDeleteId] = useState<string | null>(null);
@@ -120,9 +129,9 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
     : false;
 
   const handleDelete = async () => {
-    const deletePromise = fetch(`/api/chat?id=${deleteId}`, {
-      method: 'DELETE',
-    });
+    if (!deleteId) return;
+
+    const deletePromise = deleteChatById(deleteId);
 
     toast.promise(deletePromise, {
       loading: 'Deleting chat...',

@@ -1,6 +1,6 @@
 'use client';
 
-import { startTransition, useMemo, useOptimistic, useState } from 'react';
+import { startTransition, useEffect, useMemo, useOptimistic, useState } from 'react';
 
 import { saveChatModelAsCookie } from '@/app/(chat)/actions';
 import { Button } from '@/components/ui/button';
@@ -25,10 +25,22 @@ export function ModelSelector({
   const [optimisticModelId, setOptimisticModelId] =
     useOptimistic(selectedModelId);
 
-  const availableModels = useMemo(() => getAvailableModels(), []);
+  // Use useEffect to ensure client-side only execution for available models
+  const [availableModels, setAvailableModels] = useState<Array<any>>([]);
+
+  useEffect(() => {
+    // This runs only on the client, preventing hydration mismatch
+    setAvailableModels(getAvailableModels());
+  }, []);
 
   const selectedChatModel = useMemo(
-    () => availableModels.find((chatModel) => chatModel.id === optimisticModelId) || availableModels[0],
+    () => {
+      // Default to a safe fallback during server rendering
+      if (availableModels.length === 0) {
+        return { id: 'xai-grok-2', name: 'xAI Grok-2', description: 'xAI Grok-2 model', provider: 'xai' };
+      }
+      return availableModels.find((chatModel) => chatModel.id === optimisticModelId) || availableModels[0];
+    },
     [optimisticModelId, availableModels],
   );
 

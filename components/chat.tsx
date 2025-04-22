@@ -5,12 +5,14 @@ import { useChat } from '@ai-sdk/react';
 import { useState } from 'react';
 import useSWR, { useSWRConfig } from 'swr';
 import { ChatHeader } from '@/components/chat-header';
-import type { Vote } from '@/lib/db/schema';
-import { fetcher, generateUUID } from '@/lib/utils';
+import { getVotesByChatId } from '@/lib/api-client';
+import { generateUUID } from '@/lib/utils';
+import type { IVote } from '@/types/models';
 import { Artifact } from './artifact';
 import { MultimodalInput } from './multimodal-input';
 import { Messages } from './messages';
 import type { VisibilityType } from './visibility-selector';
+import { ApiKeyWarning } from './api-key-warning';
 import { useArtifactSelector } from '@/hooks/use-artifact';
 import { toast } from 'sonner';
 import { unstable_serialize } from 'swr/infinite';
@@ -56,9 +58,9 @@ export function Chat({
     },
   });
 
-  const { data: votes } = useSWR<Array<Vote>>(
-    messages.length >= 2 ? `/api/vote?chatId=${id}` : null,
-    fetcher,
+  const { data: votes } = useSWR<Array<IVote>>(
+    messages.length >= 2 ? id : null,
+    getVotesByChatId,
   );
 
   const [attachments, setAttachments] = useState<Array<Attachment>>([]);
@@ -73,6 +75,10 @@ export function Chat({
           selectedVisibilityType={selectedVisibilityType}
           isReadonly={isReadonly}
         />
+
+        <div className="px-4 pt-4">
+          <ApiKeyWarning />
+        </div>
 
         <Messages
           chatId={id}

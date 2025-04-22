@@ -2,8 +2,13 @@ import { Toaster } from 'sonner';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { ThemeProvider } from '@/components/theme-provider';
+import { setupPublicEnv } from '@/lib/env-server';
+import Script from 'next/script';
 
 import './globals.css';
+
+// Setup public environment variables
+setupPublicEnv();
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://chat.vercel.ai'),
@@ -68,6 +73,16 @@ export default async function RootLayout({
             __html: THEME_COLOR_SCRIPT,
           }}
         />
+        <Script id="env-script">
+          {`
+            window.__ENV = {
+              XAI_API_KEY: "${process.env.NEXT_PUBLIC_HAS_XAI_API_KEY || ''}",
+              OPENAI_API_KEY: "${process.env.NEXT_PUBLIC_HAS_OPENAI_API_KEY || ''}",
+              ANTHROPIC_API_KEY: "${process.env.NEXT_PUBLIC_HAS_ANTHROPIC_API_KEY || ''}",
+              GOOGLE_API_KEY: "${process.env.NEXT_PUBLIC_HAS_GOOGLE_API_KEY || ''}"
+            };
+          `}
+        </Script>
       </head>
       <body className="antialiased">
         <ThemeProvider

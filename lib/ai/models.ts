@@ -79,9 +79,29 @@ export const chatModels: Array<ChatModel> = [
 
 // Filter models based on available providers
 export function getAvailableModels(): Array<ChatModel> {
-  // Import here to avoid circular dependencies
-  const { getAvailableProviders } = require('./providers/config');
-  const availableProviders = getAvailableProviders();
+  // Check if we're running on the server
+  if (typeof window === 'undefined') {
+    // During server-side rendering, return a default model to prevent hydration issues
+    return [chatModels.find(model => model.id === 'xai-grok-2')] as Array<ChatModel>;
+  }
 
-  return chatModels.filter(model => availableProviders.includes(model.provider));
+  try {
+    // Import here to avoid circular dependencies
+    const { getAvailableProviders } = require('./providers/config');
+    const availableProviders = getAvailableProviders();
+
+    const filteredModels = chatModels.filter(model => availableProviders.includes(model.provider));
+
+    // If no models are available, return at least one model to prevent crashes
+    if (filteredModels.length === 0) {
+      console.warn('No AI models available. Using xAI Grok-2 as fallback, but it will not work without an API key.');
+      return [chatModels.find(model => model.id === 'xai-grok-2')] as Array<ChatModel>;
+    }
+
+    return filteredModels;
+  } catch (error) {
+    console.error('Error getting available models:', error);
+    // Return a default model in case of error
+    return [chatModels.find(model => model.id === 'xai-grok-2')] as Array<ChatModel>;
+  }
 }

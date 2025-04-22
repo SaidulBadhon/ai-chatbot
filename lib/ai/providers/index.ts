@@ -76,41 +76,77 @@ export const aiProvider = isTestEnvironment
   ? testProvider
   : {
       languageModel: (modelId: string) => {
+        // Handle legacy model IDs
+        if (modelId === 'chat-model') {
+          modelId = 'xai-grok-2';
+        } else if (modelId === 'chat-model-reasoning') {
+          modelId = 'xai-grok-3-mini';
+        } else if (modelId === 'title-model' || modelId === 'artifact-model') {
+          modelId = 'xai-grok-2';
+        }
+
         // xAI models
-        if (modelId.startsWith('xai-')) {
+        if (modelId.startsWith('xai-') && config.xai.enabled) {
           return xaiProvider.languageModel(modelId);
         }
         // OpenAI models
-        if (modelId.startsWith('openai-')) {
+        if (modelId.startsWith('openai-') && config.openai.enabled) {
           return openaiProvider.languageModel(modelId);
         }
         // Anthropic models
-        if (modelId.startsWith('anthropic-')) {
+        if (modelId.startsWith('anthropic-') && config.anthropic.enabled) {
           return anthropicProvider.languageModel(modelId);
         }
         // Google models
-        if (modelId.startsWith('google-')) {
+        if (modelId.startsWith('google-') && config.google.enabled) {
           return googleProvider.languageModel(modelId);
         }
-        
-        // Default to xAI Grok-2 for backward compatibility
+
+        // Find first available provider
+        if (config.xai.enabled) {
+          return xaiProvider.languageModel('xai-grok-2');
+        } else if (config.openai.enabled) {
+          return openaiProvider.languageModel('openai-gpt-3.5-turbo');
+        } else if (config.anthropic.enabled) {
+          return anthropicProvider.languageModel('anthropic-claude-3-haiku');
+        } else if (config.google.enabled) {
+          return googleProvider.languageModel('google-gemini-1.5-flash');
+        }
+
+        // Fallback to xAI (will likely fail without API key, but prevents crashes)
+        console.warn(`No provider available for model ${modelId}. Using xAI as fallback, but it will not work without an API key.`);
         return xaiProvider.languageModel('xai-grok-2');
       },
       imageModel: (modelId: string) => {
+        // Handle legacy model IDs
+        if (modelId === 'small-model') {
+          modelId = 'xai-image';
+        }
+
         // xAI models
-        if (modelId.startsWith('xai-')) {
+        if (modelId.startsWith('xai-') && config.xai.enabled) {
           return xaiProvider.imageModel(modelId);
         }
         // OpenAI models
-        if (modelId.startsWith('openai-')) {
+        if (modelId.startsWith('openai-') && config.openai.enabled) {
           return openaiProvider.imageModel(modelId);
         }
         // Google models
-        if (modelId.startsWith('google-')) {
+        if (modelId.startsWith('google-') && config.google.enabled) {
           return googleProvider.imageModel(modelId);
         }
-        
-        // Default to xAI image model for backward compatibility
+
+        // Find first available provider
+        if (config.xai.enabled) {
+          return xaiProvider.imageModel('xai-image');
+        } else if (config.openai.enabled) {
+          return openaiProvider.imageModel('openai-dall-e-3');
+        } else if (config.google.enabled) {
+          return googleProvider.imageModel('google-gemini-vision');
+        }
+
+        // Fallback to xAI (will likely fail without API key, but prevents crashes)
+        console.warn(`No provider available for image model ${modelId}. Using xAI as fallback, but it will not work without an API key.`);
         return xaiProvider.imageModel('xai-image');
       },
     };
