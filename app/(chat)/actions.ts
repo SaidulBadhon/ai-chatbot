@@ -6,8 +6,8 @@ import { cookies } from 'next/headers';
 import {
   deleteMessagesByChatIdAfterTimestamp,
   getMessageById,
-  updateChatVisiblityById,
-} from '@/lib/db/queries';
+  updateChatVisibility as updateChatVisibilityServer,
+} from '@/lib/server-api-client';
 import { VisibilityType } from '@/components/visibility-selector';
 import { aiProvider } from '@/lib/ai/providers';
 
@@ -35,12 +35,15 @@ export async function generateTitleFromUserMessage({
 }
 
 export async function deleteTrailingMessages({ id }: { id: string }) {
-  const [message] = await getMessageById({ id });
+  try {
+    const message = await getMessageById(id);
 
-  await deleteMessagesByChatIdAfterTimestamp({
-    chatId: message.chatId,
-    timestamp: message.createdAt,
-  });
+    if (message) {
+      await deleteMessagesByChatIdAfterTimestamp(message.chatId, message.createdAt);
+    }
+  } catch (error) {
+    console.error('Error deleting trailing messages:', error);
+  }
 }
 
 export async function updateChatVisibility({
@@ -50,5 +53,9 @@ export async function updateChatVisibility({
   chatId: string;
   visibility: VisibilityType;
 }) {
-  await updateChatVisiblityById({ chatId, visibility });
+  try {
+    await updateChatVisibilityServer(chatId, visibility);
+  } catch (error) {
+    console.error('Error updating chat visibility:', error);
+  }
 }

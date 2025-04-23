@@ -8,35 +8,12 @@ import { DEFAULT_CHAT_MODEL } from '@/lib/ai/models';
 import { Attachment, UIMessage } from 'ai';
 import { IMessage } from '@/types/models';
 
-// This is a server component, so we need to use fetch directly
-async function fetchChatById(id: string) {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/chat/${id}`, {
-    cache: 'no-store',
-  });
-
-  if (!response.ok) {
-    return null;
-  }
-
-  return response.json();
-}
-
-async function fetchMessagesByChatId(id: string) {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/chat/${id}/messages`, {
-    cache: 'no-store',
-  });
-
-  if (!response.ok) {
-    return [];
-  }
-
-  return response.json();
-}
+import { getChatById, getMessagesByChatId } from '@/lib/server-api-client';
 
 export default async function Page(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
   const { id } = params;
-  const chat = await fetchChatById(id);
+  const chat = await getChatById(id);
 
   if (!chat) {
     notFound();
@@ -54,7 +31,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
     }
   }
 
-  const messagesFromDb = await fetchMessagesByChatId(id);
+  const messagesFromDb = await getMessagesByChatId(id);
 
   function convertToUIMessages(messages: Array<IMessage>): Array<UIMessage> {
     return messages.map((message) => ({

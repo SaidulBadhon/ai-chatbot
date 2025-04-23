@@ -1,8 +1,8 @@
 import { z } from 'zod';
 import { Session } from 'next-auth';
 import { DataStreamWriter, streamObject, tool } from 'ai';
-import { getDocumentById, saveSuggestions } from '@/lib/db/queries';
-import { Suggestion } from '@/lib/db/schema';
+import { getDocumentById, saveSuggestions } from '@/lib/server-api-client';
+import { ISuggestion } from '@/types/models';
 import { generateUUID } from '@/lib/utils';
 import { aiProvider } from '../providers';
 
@@ -23,7 +23,7 @@ export const requestSuggestions = ({
         .describe('The ID of the document to request edits'),
     }),
     execute: async ({ documentId }) => {
-      const document = await getDocumentById({ id: documentId });
+      const document = await getDocumentById(documentId);
 
       if (!document || !document.content) {
         return {
@@ -31,9 +31,14 @@ export const requestSuggestions = ({
         };
       }
 
-      const suggestions: Array<
-        Omit<Suggestion, 'userId' | 'createdAt' | 'documentCreatedAt'>
-      > = [];
+      const suggestions: Array<{
+        id: string;
+        documentId: string;
+        originalText: string;
+        suggestedText: string;
+        description: string;
+        isResolved: boolean;
+      }> = [];
 
       const { elementStream } = streamObject({
         model: aiProvider.languageModel('artifact-model'),
@@ -69,14 +74,10 @@ export const requestSuggestions = ({
       if (session.user?.id) {
         const userId = session.user.id;
 
-        await saveSuggestions({
-          suggestions: suggestions.map((suggestion) => ({
-            ...suggestion,
-            userId,
-            createdAt: new Date(),
-            documentCreatedAt: document.createdAt,
-          })),
-        });
+        await saveSuggestions(suggestions.map((suggestion) => ({
+          ...suggestion,
+          userId,
+        })));
       }
 
       return {

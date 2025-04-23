@@ -2,7 +2,8 @@ import { compare } from 'bcrypt-ts';
 import NextAuth, { type User, type Session } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 
-import { getUser } from '@/lib/db/queries';
+import { IUser } from '@/types/models';
+import { loginUser } from '@/lib/server-api-client';
 
 import { authConfig } from './auth.config';
 import { DUMMY_PASSWORD } from '@/lib/constants';
@@ -22,25 +23,20 @@ export const {
     Credentials({
       credentials: {},
       async authorize({ email, password }: any) {
-        const users = await getUser(email);
+        try {
+          // Use the loginUser function from our API client
+          const response = await loginUser(email, password);
 
-        if (users.length === 0) {
+          if (response && response.user) {
+            return response.user as any;
+          }
+
+          return null;
+        } catch (error) {
+          // If login fails, do a dummy compare to prevent timing attacks
           await compare(password, DUMMY_PASSWORD);
           return null;
         }
-
-        const [user] = users;
-
-        if (!user.password) {
-          await compare(password, DUMMY_PASSWORD);
-          return null;
-        }
-
-        const passwordsMatch = await compare(password, user.password);
-
-        if (!passwordsMatch) return null;
-
-        return user as any;
       },
     }),
   ],

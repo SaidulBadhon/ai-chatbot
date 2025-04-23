@@ -2,7 +2,7 @@
 
 import { z } from 'zod';
 
-import { createUser, getUser } from '@/lib/db/queries';
+import { createUser, getUser } from '@/lib/server-api-client';
 
 import { signIn } from './auth';
 
@@ -61,12 +61,17 @@ export const register = async (
       password: formData.get('password'),
     });
 
-    const [user] = await getUser(validatedData.email);
+    try {
+      const user = await getUser(validatedData.email);
 
-    if (user) {
-      return { status: 'user_exists' } as RegisterActionState;
+      if (user) {
+        return { status: 'user_exists' } as RegisterActionState;
+      }
+      await createUser(validatedData.email, validatedData.password);
+    } catch (error) {
+      // If user doesn't exist, getUser will throw an error
+      await createUser(validatedData.email, validatedData.password);
     }
-    await createUser(validatedData.email, validatedData.password);
     await signIn('credentials', {
       email: validatedData.email,
       password: validatedData.password,
