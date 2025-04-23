@@ -3,27 +3,27 @@
 import { UIMessage } from 'ai';
 
 // API base URL
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8011/api/v1';
 
 // Helper function for making API requests
 async function fetchAPI(endpoint: string, options: RequestInit = {}) {
   const url = `${API_BASE_URL}${endpoint}`;
-  
+
   const headers = {
     'Content-Type': 'application/json',
     ...options.headers,
   };
-  
+
   const response = await fetch(url, {
     ...options,
     headers,
   });
-  
+
   if (!response.ok) {
     const error = await response.json().catch(() => ({}));
     throw new Error(error.message || 'An error occurred while fetching the data.');
   }
-  
+
   return response.json();
 }
 
@@ -49,13 +49,13 @@ export async function loginUser(email: string, password: string) {
 // Chat API
 export async function getChatsByUserId(userId: string, limit = 20, startingAfter?: string, endingBefore?: string) {
   let url = `/chat/user/${userId}?limit=${limit}`;
-  
+
   if (startingAfter) {
     url += `&startingAfter=${startingAfter}`;
   } else if (endingBefore) {
     url += `&endingBefore=${endingBefore}`;
   }
-  
+
   return fetchAPI(url);
 }
 
@@ -153,4 +153,34 @@ export async function updateSuggestion(id: string, isResolved: boolean) {
     method: 'PATCH',
     body: JSON.stringify({ isResolved }),
   });
+}
+
+// File Upload API
+export async function uploadFile(file: File) {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const url = `${API_BASE_URL}/files/upload`;
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}));
+      throw new Error(error.message || 'An error occurred while uploading the file.');
+    }
+
+    const data = await response.json();
+    return {
+      url: `${API_BASE_URL}/files${data.url}`,
+      name: data.pathname,
+      contentType: data.contentType,
+    };
+  } catch (error) {
+    console.error('Error uploading file:', error);
+    throw error;
+  }
 }

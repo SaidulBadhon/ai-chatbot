@@ -1,62 +1,155 @@
-<a href="https://chat.vercel.ai/">
-  <img alt="Next.js 14 and App Router-ready AI chatbot." src="app/(chat)/opengraph-image.png">
-  <h1 align="center">Chat SDK</h1>
-</a>
+# Vercal AI Chatbot
 
-<p align="center">
-    Chat SDK is a free, open-source template built with Next.js and the AI SDK that helps you quickly build powerful chatbot applications.
-</p>
+A modern AI chatbot application with a clean architecture, separating frontend and backend concerns.
 
-<p align="center">
-  <a href="https://chat-sdk.dev"><strong>Read Docs</strong></a> ·
-  <a href="#features"><strong>Features</strong></a> ·
-  <a href="#model-providers"><strong>Model Providers</strong></a> ·
-  <a href="#deploy-your-own"><strong>Deploy Your Own</strong></a> ·
-  <a href="#running-locally"><strong>Running locally</strong></a>
-</p>
-<br/>
+## Project Structure
+
+This project is split into two parts:
+
+1. **Frontend**: A Next.js application that handles the user interface and client-side logic
+2. **Backend**: A separate Bun/Hono/Mongoose application that provides the API
 
 ## Features
 
-- [Next.js](https://nextjs.org) App Router
-  - Advanced routing for seamless navigation and performance
-  - React Server Components (RSCs) and Server Actions for server-side rendering and increased performance
-- [AI SDK](https://sdk.vercel.ai/docs)
-  - Unified API for generating text, structured objects, and tool calls with LLMs
-  - Hooks for building dynamic chat and generative user interfaces
-  - Supports xAI (default), OpenAI, Fireworks, and other model providers
-- [shadcn/ui](https://ui.shadcn.com)
-  - Styling with [Tailwind CSS](https://tailwindcss.com)
-  - Component primitives from [Radix UI](https://radix-ui.com) for accessibility and flexibility
-- Data Persistence
-  - [Neon Serverless Postgres](https://vercel.com/marketplace/neon) for saving chat history and user data
-  - [Vercel Blob](https://vercel.com/storage/blob) for efficient file storage
-- [Auth.js](https://authjs.dev)
-  - Simple and secure authentication
+- **Multiple AI Providers**: Support for xAI, OpenAI, Anthropic, and Google AI
+- **Chat History**: Save and revisit previous conversations
+- **File Uploads**: Share images and other files with the AI
+- **Document Editing**: Collaborative document editing with AI assistance
+- **Responsive Design**: Works on desktop and mobile devices
 
-## Model Providers
+## Getting Started
 
-This template ships with [xAI](https://x.ai) `grok-2-1212` as the default chat model. However, with the [AI SDK](https://sdk.vercel.ai/docs), you can switch LLM providers to [OpenAI](https://openai.com), [Anthropic](https://anthropic.com), [Cohere](https://cohere.com/), and [many more](https://sdk.vercel.ai/providers/ai-sdk-providers) with just a few lines of code.
+### Prerequisites
 
-## Deploy Your Own
+- Node.js 18+ for the frontend
+- Bun for the backend
+- MongoDB instance (local or cloud)
 
-You can deploy your own version of the Next.js AI Chatbot to Vercel with one click:
+### Installation
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fai-chatbot&env=AUTH_SECRET&envDescription=Generate%20a%20random%20secret%20to%20use%20for%20authentication&envLink=https%3A%2F%2Fgenerate-secret.vercel.app%2F32&project-name=my-awesome-chatbot&repository-name=my-awesome-chatbot&demo-title=AI%20Chatbot&demo-description=An%20Open-Source%20AI%20Chatbot%20Template%20Built%20With%20Next.js%20and%20the%20AI%20SDK%20by%20Vercel&demo-url=https%3A%2F%2Fchat.vercel.ai&products=%5B%7B%22type%22%3A%22integration%22%2C%22protocol%22%3A%22ai%22%2C%22productSlug%22%3A%22grok%22%2C%22integrationSlug%22%3A%22xai%22%7D%2C%7B%22type%22%3A%22integration%22%2C%22protocol%22%3A%22storage%22%2C%22productSlug%22%3A%22neon%22%2C%22integrationSlug%22%3A%22neon%22%7D%2C%7B%22type%22%3A%22blob%22%7D%5D)
+#### Frontend (This Repository)
 
-## Running locally
+1. Clone the repository
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Create a `.env.local` file with your configuration:
 
-You will need to use the environment variables [defined in `.env.example`](.env.example) to run Next.js AI Chatbot. It's recommended you use [Vercel Environment Variables](https://vercel.com/docs/projects/environment-variables) for this, but a `.env` file is all that is necessary.
+   ```
+   # Backend API URL
+   NEXT_PUBLIC_API_URL=http://localhost:8000/api
 
-> Note: You should not commit your `.env` file or it will expose secrets that will allow others to control access to your various AI and authentication provider accounts.
+   # Authentication
+   AUTH_SECRET=your_auth_secret_here
 
-1. Install Vercel CLI: `npm i -g vercel`
-2. Link local instance with Vercel and GitHub accounts (creates `.vercel` directory): `vercel link`
-3. Download your environment variables: `vercel env pull`
+   # AI Provider API Keys (optional, can be configured in backend)
+   NEXT_PUBLIC_HAS_XAI_API_KEY=true
+   NEXT_PUBLIC_HAS_OPENAI_API_KEY=true
+   NEXT_PUBLIC_HAS_ANTHROPIC_API_KEY=true
+   NEXT_PUBLIC_HAS_GOOGLE_API_KEY=true
+   ```
+
+#### Backend (Separate Repository)
+
+1. Clone the backend repository
+2. Install dependencies:
+   ```bash
+   bun install
+   ```
+3. Create a `.env` file with your configuration:
+
+   ```
+   # Server Configuration
+   PORT=8000
+
+   # MongoDB Connection String
+   MONGODB_URI=your_mongodb_connection_string
+
+   # JWT Secret for Authentication
+   JWT_SECRET=your_jwt_secret_here
+
+   # AI Provider API Keys
+   XAI_API_KEY=your_xai_api_key
+   OPENAI_API_KEY=your_openai_api_key
+   ANTHROPIC_API_KEY=your_anthropic_api_key
+   GOOGLE_API_KEY=your_google_api_key
+   ```
+
+### Running the Application
+
+#### Development Mode
+
+Start both the frontend and backend servers:
 
 ```bash
-pnpm install
-pnpm dev
+# In the frontend directory
+npm run dev
+
+# In the backend directory
+bun run dev
 ```
 
-Your app template should now be running on [localhost:3000](http://localhost:3000).
+Or use the provided script to start both servers:
+
+```bash
+./run-dev.sh
+```
+
+#### Production Mode
+
+For production deployment, build and start each application separately:
+
+```bash
+# Frontend
+npm run build
+npm start
+
+# Backend
+bun run build
+bun run serve
+```
+
+## API Endpoints
+
+The backend provides the following API endpoints:
+
+### User API
+
+- `GET /api/user/:email` - Get user by email
+- `POST /api/user` - Create a new user
+- `POST /api/user/login` - Login user
+
+### Chat API
+
+- `GET /api/chat/user/:id` - Get chats by user ID
+- `GET /api/chat/:id` - Get chat by ID
+- `POST /api/chat` - Create a new chat
+- `DELETE /api/chat/:id` - Delete chat by ID
+- `PATCH /api/chat/:id/visibility` - Update chat visibility
+
+### Message API
+
+- `GET /api/chat/:chatId/messages` - Get messages by chat ID
+- `GET /api/chat/message/:id` - Get message by ID
+- `POST /api/chat/messages` - Create messages
+- `DELETE /api/chat/:chatId/messages` - Delete messages by chat ID after timestamp
+- `GET /api/chat/:chatId/votes` - Get votes by chat ID
+- `POST /api/chat/:chatId/message/:messageId/vote` - Vote on a message
+
+### Document API
+
+- `GET /api/document/all/:id` - Get documents by ID
+- `GET /api/document/:id` - Get document by ID
+- `POST /api/document` - Create a new document
+- `DELETE /api/document/:id` - Delete documents by ID after timestamp
+
+### Suggestion API
+
+- `GET /api/suggestion/document/:documentId` - Get suggestions by document ID
+- `POST /api/suggestion` - Create suggestions
+- `PATCH /api/suggestion/:id` - Update suggestion
+
+## License
+
+This project is licensed under the MIT License.

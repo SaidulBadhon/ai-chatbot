@@ -11,8 +11,8 @@ import {
 } from 'react';
 import useSWR, { useSWRConfig } from 'swr';
 import { useDebounceCallback, useWindowSize } from 'usehooks-ts';
-import type { Document, Vote } from '@/lib/db/schema';
-import { fetcher } from '@/lib/utils';
+import type { IDocument } from '@/types/models';
+import { getDocumentsById, createDocument } from '@/lib/api-client';
 import { MultimodalInput } from './multimodal-input';
 import { Toolbar } from './toolbar';
 import { VersionFooter } from './version-footer';
@@ -88,15 +88,15 @@ function PureArtifact({
     data: documents,
     isLoading: isDocumentsFetching,
     mutate: mutateDocuments,
-  } = useSWR<Array<Document>>(
+  } = useSWR<Array<IDocument>>(
     artifact.documentId !== 'init' && artifact.status !== 'streaming'
-      ? `/api/document?id=${artifact.documentId}`
+      ? artifact.documentId
       : null,
-    fetcher,
+    getDocumentsById,
   );
 
   const [mode, setMode] = useState<'edit' | 'diff'>('edit');
-  const [document, setDocument] = useState<Document | null>(null);
+  const [document, setDocument] = useState<IDocument | null>(null);
   const [currentVersionIndex, setCurrentVersionIndex] = useState(-1);
 
   const { open: isSidebarOpen } = useSidebar();
@@ -127,8 +127,8 @@ function PureArtifact({
     (updatedContent: string) => {
       if (!artifact) return;
 
-      mutate<Array<Document>>(
-        `/api/document?id=${artifact.documentId}`,
+      mutate<Array<IDocument>>(
+        artifact.documentId,
         async (currentDocuments) => {
           if (!currentDocuments) return undefined;
 
@@ -140,14 +140,14 @@ function PureArtifact({
           }
 
           if (currentDocument.content !== updatedContent) {
-            await fetch(`/api/document?id=${artifact.documentId}`, {
-              method: 'POST',
-              body: JSON.stringify({
-                title: artifact.title,
-                content: updatedContent,
-                kind: artifact.kind,
-              }),
-            });
+            // Use the API client to create a new document
+            await createDocument(
+              artifact.documentId,
+              artifact.title,
+              artifact.kind,
+              updatedContent,
+              currentDocument.userId
+            );
 
             setIsContentDirty(false);
 
