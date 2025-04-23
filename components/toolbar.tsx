@@ -365,7 +365,7 @@ const PureToolbar = ({
 
   const toolsByArtifactKind = artifactDefinition.toolbar;
 
-  if (toolsByArtifactKind.length === 0) {
+  if (toolsByArtifactKind?.length === 0) {
     return null;
   }
 
@@ -387,7 +387,7 @@ const PureToolbar = ({
               : {
                   opacity: 1,
                   y: 0,
-                  height: toolsByArtifactKind.length * 50,
+                  height: toolsByArtifactKind?.length * 50,
                   transition: { delay: 0 },
                   scale: 1,
                 }

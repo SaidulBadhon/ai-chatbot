@@ -33,13 +33,13 @@ const PureSpreadsheetEditor = ({
 
     const paddedData = result.data.map((row) => {
       const paddedRow = [...row];
-      while (paddedRow.length < MIN_COLS) {
+      while (paddedRow?.length < MIN_COLS) {
         paddedRow.push('');
       }
       return paddedRow;
     });
 
-    while (paddedData.length < MIN_ROWS) {
+    while (paddedData?.length < MIN_ROWS) {
       paddedData.push(Array(MIN_COLS).fill(''));
     }
 

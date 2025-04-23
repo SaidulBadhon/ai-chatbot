@@ -116,7 +116,7 @@ export function sanitizeResponseMessages({
       content.type === 'tool-call'
         ? toolResultIds.includes(content.toolCallId)
         : content.type === 'text'
-          ? content.text.length > 0
+          ? content.text?.length > 0
           : true,
     );
 
@@ -132,7 +132,7 @@ export function sanitizeResponseMessages({
   });
 
   return messagesBySanitizedContent.filter(
-    (message) => message.content.length > 0,
+    (message) => message.content?.length > 0,
   );
 }
 
@@ -146,9 +146,9 @@ export function getDocumentTimestampByIndex(
   index: number,
 ) {
   if (!documents) return new Date();
-  if (index > documents.length) return new Date();
+  if (index > documents?.length) return new Date();
 
-  return documents[index].createdAt;
+  return documents[index]?.createdAt;
 }
 
 export function getTrailingMessageId({

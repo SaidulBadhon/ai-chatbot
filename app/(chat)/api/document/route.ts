@@ -58,7 +58,7 @@ export async function POST(request: Request) {
 
   const documents = await getDocumentsById({ id });
 
-  if (documents.length > 0) {
+  if (documents?.length > 0) {
     const [document] = documents;
 
     if (document.userId !== session.user.id) {

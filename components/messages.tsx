@@ -35,14 +35,14 @@ function PureMessages({
       ref={messagesContainerRef}
       className="flex flex-col min-w-0 gap-6 flex-1 overflow-y-scroll pt-4"
     >
-      {messages.length === 0 && <Greeting />}
+      {messages?.length === 0 && <Greeting />}
 
       {messages.map((message, index) => (
         <PreviewMessage
           key={message.id}
           chatId={chatId}
           message={message}
-          isLoading={status === 'streaming' && messages.length - 1 === index}
+          isLoading={status === 'streaming' && messages?.length - 1 === index}
           vote={
             votes
               ? votes.find((vote) => vote.messageId === message.id)
@@ -55,8 +55,8 @@ function PureMessages({
       ))}
 
       {status === 'submitted' &&
-        messages.length > 0 &&
-        messages[messages.length - 1].role === 'user' && <ThinkingMessage />}
+        messages?.length > 0 &&
+        messages[messages?.length - 1].role === 'user' && <ThinkingMessage />}
 
       <div
         ref={messagesEndRef}
@@ -71,7 +71,7 @@ export const Messages = memo(PureMessages, (prevProps, nextProps) => {
 
   if (prevProps.status !== nextProps.status) return false;
   if (prevProps.status && nextProps.status) return false;
-  if (prevProps.messages.length !== nextProps.messages.length) return false;
+  if (prevProps.messages?.length !== nextProps.messages?.length) return false;
   if (!equal(prevProps.messages, nextProps.messages)) return false;
   if (!equal(prevProps.votes, nextProps.votes)) return false;
 

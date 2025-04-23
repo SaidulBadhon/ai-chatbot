@@ -93,7 +93,7 @@ export function getAvailableModels(): Array<ChatModel> {
     const filteredModels = chatModels.filter(model => availableProviders.includes(model.provider));
 
     // If no models are available, return at least one model to prevent crashes
-    if (filteredModels.length === 0) {
+    if (filteredModels?.length === 0) {
       console.warn('No AI models available. Using xAI Grok-2 as fallback, but it will not work without an API key.');
       return [chatModels.find(model => model.id === 'xai-grok-2')] as Array<ChatModel>;
     }

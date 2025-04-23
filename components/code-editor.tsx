@@ -79,7 +79,7 @@ function PureCodeEditor({ content, onSaveContent, status }: EditorProps) {
         const transaction = editorRef.current.state.update({
           changes: {
             from: 0,
-            to: currentContent.length,
+            to: currentContent?.length,
             insert: content,
           },
           annotations: [Transaction.remote.of(true)],

@@ -40,7 +40,7 @@ function PureArtifactMessages({
           chatId={chatId}
           key={message.id}
           message={message}
-          isLoading={status === 'streaming' && index === messages.length - 1}
+          isLoading={status === 'streaming' && index === messages?.length - 1}
           vote={
             votes
               ? votes.find((vote) => vote.messageId === message.id)
@@ -72,7 +72,7 @@ function areEqual(
 
   if (prevProps.status !== nextProps.status) return false;
   if (prevProps.status && nextProps.status) return false;
-  if (prevProps.messages.length !== nextProps.messages.length) return false;
+  if (prevProps.messages?.length !== nextProps.messages?.length) return false;
   if (!equal(prevProps.votes, nextProps.votes)) return false;
 
   return true;

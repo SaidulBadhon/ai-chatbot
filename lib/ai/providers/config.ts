@@ -63,7 +63,7 @@ export function getAvailableProviders(): string[] {
   if (config.google.enabled) providers.push('google');
 
   // Always return at least one provider (xAI as fallback) to prevent crashes
-  if (providers.length === 0) {
+  if (providers?.length === 0) {
     console.warn('No AI providers configured. Using xAI as fallback, but it will not work without an API key.');
     providers.push('xai');
   }

@@ -44,6 +44,7 @@ export function Chat({
     stop,
     reload,
   } = useChat({
+    api: '/chat',
     id,
     body: { id, selectedChatModel: selectedChatModel },
     initialMessages,
@@ -59,7 +60,7 @@ export function Chat({
   });
 
   const { data: votes } = useSWR<Array<IVote>>(
-    messages.length >= 2 ? id : null,
+    messages?.length >= 2 ? id : null,
     getVotesByChatId,
   );
 

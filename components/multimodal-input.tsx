@@ -163,9 +163,9 @@ function PureMultimodalInput({
 
   return (
     <div className="relative w-full flex flex-col gap-4">
-      {messages.length === 0 &&
-        attachments.length === 0 &&
-        uploadQueue.length === 0 && (
+      {messages?.length === 0 &&
+        attachments?.length === 0 &&
+        uploadQueue?.length === 0 && (
           <SuggestedActions append={append} chatId={chatId} />
         )}
 
@@ -178,7 +178,7 @@ function PureMultimodalInput({
         tabIndex={-1}
       />
 
-      {(attachments.length > 0 || uploadQueue.length > 0) && (
+      {(attachments?.length > 0 || uploadQueue?.length > 0) && (
         <div
           data-testid="attachments-preview"
           className="flex flex-row gap-2 overflow-x-scroll items-end"
@@ -326,7 +326,7 @@ function PureSendButton({
         event.preventDefault();
         submitForm();
       }}
-      disabled={input.length === 0 || uploadQueue.length > 0}
+      disabled={input?.length === 0 || uploadQueue?.length > 0}
     >
       <ArrowUpIcon size={14} />
     </Button>
@@ -334,7 +334,7 @@ function PureSendButton({
 }
 
 const SendButton = memo(PureSendButton, (prevProps, nextProps) => {
-  if (prevProps.uploadQueue.length !== nextProps.uploadQueue.length)
+  if (prevProps.uploadQueue?.length !== nextProps.uploadQueue?.length)
     return false;
   if (prevProps.input !== nextProps.input) return false;
   return true;

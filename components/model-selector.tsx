@@ -36,7 +36,7 @@ export function ModelSelector({
   const selectedChatModel = useMemo(
     () => {
       // Default to a safe fallback during server rendering
-      if (availableModels.length === 0) {
+      if (availableModels?.length === 0) {
         return { id: 'xai-grok-2', name: 'xAI Grok-2', description: 'xAI Grok-2 model', provider: 'xai' };
       }
       return availableModels.find((chatModel) => chatModel.id === optimisticModelId) || availableModels[0];
@@ -63,7 +63,7 @@ export function ModelSelector({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="min-w-[300px]">
-        {availableModels.length === 0 ? (
+        {availableModels?.length === 0 ? (
           <DropdownMenuItem disabled>
             <div className="flex flex-col gap-1 items-start">
               <div>No models available</div>

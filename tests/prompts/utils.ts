@@ -14,11 +14,11 @@ export function compareMessages(
     return false;
   }
 
-  if (firstMessage.content.length !== secondMessage.content.length) {
+  if (firstMessage.content?.length !== secondMessage.content?.length) {
     return false;
   }
 
-  for (let i = 0; i < firstMessage.content.length; i++) {
+  for (let i = 0; i < firstMessage.content?.length; i++) {
     const item1 = firstMessage.content[i];
     const item2 = secondMessage.content[i];
 

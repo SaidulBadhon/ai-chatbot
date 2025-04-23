@@ -102,12 +102,12 @@ function PureArtifact({
   const { open: isSidebarOpen } = useSidebar();
 
   useEffect(() => {
-    if (documents && documents.length > 0) {
+    if (documents && documents?.length > 0) {
       const mostRecentDocument = documents.at(-1);
 
       if (mostRecentDocument) {
         setDocument(mostRecentDocument);
-        setCurrentVersionIndex(documents.length - 1);
+        setCurrentVersionIndex(documents?.length - 1);
         setArtifact((currentArtifact) => ({
           ...currentArtifact,
           content: mostRecentDocument.content ?? '',
@@ -197,7 +197,7 @@ function PureArtifact({
     if (!documents) return;
 
     if (type === 'latest') {
-      setCurrentVersionIndex(documents.length - 1);
+      setCurrentVersionIndex(documents?.length - 1);
       setMode('edit');
     }
 
@@ -210,7 +210,7 @@ function PureArtifact({
         setCurrentVersionIndex((index) => index - 1);
       }
     } else if (type === 'next') {
-      if (currentVersionIndex < documents.length - 1) {
+      if (currentVersionIndex < documents?.length - 1) {
         setCurrentVersionIndex((index) => index + 1);
       }
     }
@@ -225,8 +225,8 @@ function PureArtifact({
    */
 
   const isCurrentVersion =
-    documents && documents.length > 0
-      ? currentVersionIndex === documents.length - 1
+    documents && documents?.length > 0
+      ? currentVersionIndex === documents?.length - 1
       : true;
 
   const { width: windowWidth, height: windowHeight } = useWindowSize();
@@ -422,7 +422,7 @@ function PureArtifact({
                   ) : document ? (
                     <div className="text-sm text-muted-foreground">
                       {`Updated ${formatDistance(
-                        new Date(document.createdAt),
+                        new Date(document?.createdAt),
                         new Date(),
                         {
                           addSuffix: true,
@@ -502,7 +502,7 @@ export const Artifact = memo(PureArtifact, (prevProps, nextProps) => {
   if (prevProps.status !== nextProps.status) return false;
   if (!equal(prevProps.votes, nextProps.votes)) return false;
   if (prevProps.input !== nextProps.input) return false;
-  if (!equal(prevProps.messages, nextProps.messages.length)) return false;
+  if (!equal(prevProps.messages, nextProps.messages?.length)) return false;
 
   return true;
 });

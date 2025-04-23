@@ -12,11 +12,19 @@ async function fetchAPI(endpoint: string, options: RequestInit = {}) {
     ...options.headers,
   };
 
+  console.log('Making API request:', {
+    url,
+    method: options.method,
+    headers,
+    body: options.body,
+  });
   const response = await fetch(url, {
     ...options,
     headers,
     cache: 'no-store', // Disable caching for server components
   });
+
+  console.log('API response:', response);
 
   if (!response.ok) {
     const error = await response.json().catch(() => ({}));

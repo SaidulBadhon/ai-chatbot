@@ -50,7 +50,7 @@ const groupChatsByDate = (chats: IChat[]): GroupedChats => {
 
   return chats.reduce(
     (groups, chat) => {
-      const chatDate = new Date(chat.createdAt);
+      const chatDate = new Date(chat?.createdAt);
 
       if (isToday(chatDate)) {
         groups.today.push(chat);
@@ -125,7 +125,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
     : false;
 
   const hasEmptyChatHistory = paginatedChatHistories
-    ? paginatedChatHistories.every((page) => page.chats.length === 0)
+    ? paginatedChatHistories.every((page) => page.chats?.length === 0)
     : false;
 
   const handleDelete = async () => {
@@ -225,7 +225,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
 
                 return (
                   <div className="flex flex-col gap-6">
-                    {groupedChats.today.length > 0 && (
+                    {groupedChats.today?.length > 0 && (
                       <div>
                         <div className="px-2 py-1 text-xs text-sidebar-foreground/50">
                           Today
@@ -245,7 +245,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
                       </div>
                     )}
 
-                    {groupedChats.yesterday.length > 0 && (
+                    {groupedChats.yesterday?.length > 0 && (
                       <div>
                         <div className="px-2 py-1 text-xs text-sidebar-foreground/50">
                           Yesterday
@@ -265,7 +265,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
                       </div>
                     )}
 
-                    {groupedChats.lastWeek.length > 0 && (
+                    {groupedChats.lastWeek?.length > 0 && (
                       <div>
                         <div className="px-2 py-1 text-xs text-sidebar-foreground/50">
                           Last 7 days
@@ -285,7 +285,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
                       </div>
                     )}
 
-                    {groupedChats.lastMonth.length > 0 && (
+                    {groupedChats.lastMonth?.length > 0 && (
                       <div>
                         <div className="px-2 py-1 text-xs text-sidebar-foreground/50">
                           Last 30 days
@@ -305,7 +305,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
                       </div>
                     )}
 
-                    {groupedChats.older.length > 0 && (
+                    {groupedChats.older?.length > 0 && (
                       <div>
                         <div className="px-2 py-1 text-xs text-sidebar-foreground/50">
                           Older than last month

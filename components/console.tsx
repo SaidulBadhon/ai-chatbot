@@ -76,7 +76,7 @@ export function Console({ consoleOutputs, setConsoleOutputs }: ConsoleProps) {
     }
   }, [isArtifactVisible, setConsoleOutputs]);
 
-  return consoleOutputs.length > 0 ? (
+  return consoleOutputs?.length > 0 ? (
     <>
       <div
         className="h-2 w-full fixed cursor-ns-resize z-50"

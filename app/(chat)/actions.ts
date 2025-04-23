@@ -39,7 +39,7 @@ export async function deleteTrailingMessages({ id }: { id: string }) {
     const message = await getMessageById(id);
 
     if (message) {
-      await deleteMessagesByChatIdAfterTimestamp(message.chatId, message.createdAt);
+      await deleteMessagesByChatIdAfterTimestamp(message.chatId, message?.createdAt);
     }
   } catch (error) {
     console.error('Error deleting trailing messages:', error);

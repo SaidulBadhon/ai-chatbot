@@ -31,7 +31,7 @@ function findPositionsInDoc(doc: Node, searchText: string): Position | null {
       if (index !== -1) {
         positions = {
           start: pos + index,
-          end: pos + index + searchText.length,
+          end: pos + index + searchText?.length,
         };
 
         return false;
